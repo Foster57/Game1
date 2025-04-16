@@ -1,0 +1,73 @@
+# depslib dependency file v1.0
+1744359704 source:c:\users\dang tran tien\onedrive\desktop\advanture\main.cpp
+	"Game.h"
+	"ScoreManager.h"
+
+1744767282 c:\users\dang tran tien\onedrive\desktop\advanture\game.h
+	<SDL.h>
+	<SDL_image.h>
+	<iostream>
+	<algorithm>
+	<vector>
+	"ScoreManager.h"
+
+1743543902 source:c:\users\dang tran tien\onedrive\desktop\advanture\texture.cpp
+	"Texture.h"
+
+1743543902 c:\users\dang tran tien\onedrive\desktop\advanture\texture.h
+	<SDL.h>
+	<SDL_image.h>
+	<iostream>
+
+1744767439 source:c:\users\dang tran tien\onedrive\desktop\advanture\game.cpp
+	"Game.h"
+	"Texture.h"
+	"ScoreManager.h"
+
+1744359778 source:c:\users\dang tran tien\onedrive\desktop\advanture\scoremanager.cpp
+	"ScoreManager.h"
+	<SDL.h>
+	<SDL_ttf.h>
+	<sstream>
+
+1744359704 c:\users\dang tran tien\onedrive\desktop\advanture\scoremanager.h
+	<SDL.h>
+	<SDL_ttf.h>
+	<string>
+
+1744768722 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
+	"Game.h"
+	"Texture.h"
+	"ScoreManager.h"
+
+1744767282 c:\users\dang tran tien\onedrive\desktop\advanture\game\game.h
+	<SDL.h>
+	<SDL_image.h>
+	<iostream>
+	<algorithm>
+	<vector>
+	"ScoreManager.h"
+
+1744359704 c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.h
+	<SDL.h>
+	<SDL_ttf.h>
+	<string>
+
+1743543902 c:\users\dang tran tien\onedrive\desktop\advanture\game\texture.h
+	<SDL.h>
+	<SDL_image.h>
+	<iostream>
+
+1744359704 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\main.cpp
+	"Game.h"
+	"ScoreManager.h"
+
+1744359778 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.cpp
+	"ScoreManager.h"
+	<SDL.h>
+	<SDL_ttf.h>
+	<sstream>
+
+1743543902 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\texture.cpp
+	"Texture.h"
+
