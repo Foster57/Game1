@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "Texture.h"
 #include "ScoreManager.h"
+#include "Mixer.h"
+
 Game::Game()
     : window(nullptr), renderer(nullptr), background(nullptr), playerTexture(nullptr),
       obstacleTexture(nullptr), isRunning(false), frame(0), lastSpawnTime(0),
@@ -43,6 +45,11 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
         return false;
     }
+    if (!SoundManager::init()) {
+        std::cout << "Không thể khởi tạo âm thanh!" << std::endl;
+        return false;
+    }
+    SoundManager::playBackgroundMusic("musicbackground.mp3");
     background = TextureManager::loadTexture("../Pic and mixer/background.png", renderer);
     playerTexture = TextureManager::loadTexture("../Pic and mixer/knight1.png", renderer);
     obstacleTexture = TextureManager::loadTexture("../Pic and mixer/dan1.png", renderer);
@@ -187,7 +194,7 @@ void Game::update() {
         // Va chạm
         if (SDL_HasIntersection(&characterHitbox, &obs.rect)) {
             isGameOver = true;
-//            isRunning = false; Nếu muốn dừng game hoàn toàn
+            SoundManager::stopMusic();
             break;
         }
     }
@@ -234,6 +241,7 @@ void Game::clean() {
     SDL_DestroyTexture(gameOverTexture);
     SDL_DestroyTexture(menuBackground);
     SDL_DestroyTexture(startButtonTexture);
+    SoundManager::clean;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
