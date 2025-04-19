@@ -1,6 +1,5 @@
 #include "Mixer.h"
 
-
 Mix_Music* SoundManager::bgMusic = nullptr;
 Mix_Chunk* SoundManager::effect = nullptr;
 
@@ -18,7 +17,7 @@ void SoundManager::playBackgroundMusic(const std::string& path) {
         std::cout << "Không load được nhạc nền: " << Mix_GetError() << std::endl;
         return;
     }
-    Mix_PlayMusic(bgMusic, -1);  // lặp vô hạn
+    Mix_PlayMusic(bgMusic, -1); // lặp vô hạn
 }
 
 void SoundManager::playSoundEffect(const std::string& path) {
@@ -32,6 +31,13 @@ void SoundManager::playSoundEffect(const std::string& path) {
 
 void SoundManager::stopMusic() {
     Mix_HaltMusic();
+}
+
+void SoundManager::setMusicVolume(int volume) {
+    // Đảm bảo âm lượng nằm trong khoảng hợp lệ (0 đến MIX_MAX_VOLUME)
+    if (volume < 0) volume = 0;
+    if (volume > MIX_MAX_VOLUME) volume = MIX_MAX_VOLUME;
+    Mix_VolumeMusic(volume);
 }
 
 void SoundManager::clean() {

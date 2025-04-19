@@ -66,6 +66,7 @@ private:
     bool moveRight= false;
     bool isGameOver = false;
     bool isMenu = true;
+    int musicVolume;
 
 };
 

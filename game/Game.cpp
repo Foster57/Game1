@@ -2,54 +2,53 @@
 #include "Texture.h"
 #include "ScoreManager.h"
 #include "Mixer.h"
+#include <string>
 
 Game::Game()
     : window(nullptr), renderer(nullptr), background(nullptr), playerTexture(nullptr),
-      obstacleTexture(nullptr), isRunning(false), frame(0), lastSpawnTime(0),
-      moveLeft(false), moveRight(false), isGameOver(false), isMenu(true) {}
-
+      obstacleTexture(nullptr), gameOverTexture(nullptr), menuBackground(nullptr),
+      startButtonTexture(nullptr), frame(0), lastSpawnTime(0), obstacleBaseSpeed(0),
+      startTime(0), moveLeft(false), moveRight(false), isRunning(false),
+      isGameOver(false), isMenu(true), musicVolume(64) {
+}
 
 Game::~Game() {}
 
 bool Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-
         return false;
     }
 
     int flags = fullscreen ? SDL_WINDOW_FULLSCREEN : 0;
     window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
     if (!window) {
-
         return false;
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {
-
         return false;
     }
-
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     // Khởi tạo font
     if (!scoreManager.init("pixel.ttf", 24)) {
-
-    return false;
+        return false;
     }
 
     menuBackground = TextureManager::loadTexture("../Pic and mixer/menu_background.png", renderer);
     startButtonTexture = TextureManager::loadTexture("../Pic and mixer/start_button.png", renderer);
 
     if (!menuBackground || !startButtonTexture) {
-
         return false;
     }
     if (!SoundManager::init()) {
         std::cout << "Không thể khởi tạo âm thanh!" << std::endl;
         return false;
     }
-    SoundManager::playBackgroundMusic("musicbackground.mp3");
+    SoundManager::playBackgroundMusic("../Pic and mixer/musicbackground.mp3");
+    SoundManager::setMusicVolume(musicVolume); // Đặt âm lượng ban đầu
+
     background = TextureManager::loadTexture("../Pic and mixer/background.png", renderer);
     playerTexture = TextureManager::loadTexture("../Pic and mixer/knight1.png", renderer);
     obstacleTexture = TextureManager::loadTexture("../Pic and mixer/dan1.png", renderer);
@@ -77,7 +76,7 @@ void Game::handleEvents() {
         if (event.type == SDL_QUIT) {
             isRunning = false;
         }
-    // Khi đang ở menu, xử lý click nút Start
+        // Khi đang ở menu, xử lý click nút Start
         if (isMenu) {
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 int x = event.button.x;
@@ -88,10 +87,24 @@ void Game::handleEvents() {
                     startTime = SDL_GetTicks(); // Đánh dấu thời gian bắt đầu game
                 }
             }
+            // Điều chỉnh âm lượng trong menu
+            if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_PLUS:
+                    case SDLK_EQUALS: // Phím '+' hoặc '='
+                        musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
+                        SoundManager::setMusicVolume(musicVolume);
+                        break;
+                    case SDLK_MINUS: // Phím '-'
+                        musicVolume = std::max(musicVolume - 8, 0);
+                        SoundManager::setMusicVolume(musicVolume);
+                        break;
+                }
+            }
             return; // Không xử lý gì thêm nếu đang ở menu
         }
 
-        if (isGameOver) return ;
+        if (isGameOver) return;
 
         else if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
@@ -109,6 +122,15 @@ void Game::handleEvents() {
                         character.isJumping = true;
                     }
                     break;
+                case SDLK_PLUS:
+                case SDLK_EQUALS: // Phím '+' hoặc '='
+                    musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
+                    SoundManager::setMusicVolume(musicVolume);
+                    break;
+                case SDLK_MINUS: // Phím '-'
+                    musicVolume = std::max(musicVolume - 8, 0);
+                    SoundManager::setMusicVolume(musicVolume);
+                    break;
             }
         } else if (event.type == SDL_KEYUP) {
             switch (event.key.keysym.sym) {
@@ -122,8 +144,6 @@ void Game::handleEvents() {
         }
     }
 }
-
-
 
 void Game::update() {
     if (isGameOver) return;
@@ -140,22 +160,21 @@ void Game::update() {
         character.rect.y = GROUND_Y - character.rect.h;
         character.velocityY = 0; // Reset lại vận tốc rơi
         character.isJumping = false;
-}
+    }
     // Tạo hitbox nhỏ hơn nhân vật
     SDL_Rect characterHitbox = {
-    character.rect.x + 5,
-    character.rect.y + 5,
-    character.rect.w - 20,
-    character.rect.h - 20
-};
+        character.rect.x + 5,
+        character.rect.y + 5,
+        character.rect.w - 20,
+        character.rect.h - 20
+    };
 
-
-   playerSrc = {
-    frame * FRAME_WIDTH,
-    0, // vì chỉ có 1 hàng
-    FRAME_WIDTH,
-    FRAME_HEIGHT
-};
+    playerSrc = {
+        frame * FRAME_WIDTH,
+        0, // vì chỉ có 1 hàng
+        FRAME_WIDTH,
+        FRAME_HEIGHT
+    };
     Uint32 currentTime = SDL_GetTicks();
     // Tăng tốc độ dần dần theo thời gian (ví dụ mỗi 10 giây)
     scoreManager.update(startTime);
@@ -169,7 +188,6 @@ void Game::update() {
             Obstacle obs;
             obs.rect = { rand() % (SCREEN_WIDTH - 25), -50, 75, 75 };
             obs.speed = obstacleBaseSpeed + rand() % 3;  // speed dao động quanh tốc độ cơ bản
-
             obstacles.push_back(obs);
         }
         lastSpawnTime = currentTime;
@@ -180,32 +198,29 @@ void Game::update() {
         return o.rect.y > SCREEN_HEIGHT;
     }), obstacles.end());
     if (moveLeft) {
-    character.rect.x = std::max(0, character.rect.x - 10);
-    frame = (frame + 1) % 4;
+        character.rect.x = std::max(0, character.rect.x - 10);
+        frame = (frame + 1) % 4;
     }
     if (moveRight) {
-    character.rect.x = std::min(SCREEN_WIDTH - FRAME_WIDTH, character.rect.x + 10);
-    frame = (frame + 1) % 4;
+        character.rect.x = std::min(SCREEN_WIDTH - FRAME_WIDTH, character.rect.x + 10);
+        frame = (frame + 1) % 4;
     }
     if (!isGameOver) {
-    for (auto& obs : obstacles) {
-        obs.rect.y += obs.speed;
+        for (auto& obs : obstacles) {
+            obs.rect.y += obs.speed;
 
-        // Va chạm
-        if (SDL_HasIntersection(&characterHitbox, &obs.rect)) {
-            isGameOver = true;
-            SoundManager::stopMusic();
-            break;
+            // Va chạm
+            if (SDL_HasIntersection(&characterHitbox, &obs.rect)) {
+                isGameOver = true;
+                SoundManager::stopMusic();
+                break;
+            }
         }
+
+        obstacles.erase(std::remove_if(obstacles.begin(), obstacles.end(), [](const Obstacle& o) {
+            return o.rect.y > SCREEN_HEIGHT;
+        }), obstacles.end());
     }
-
-
-    obstacles.erase(std::remove_if(obstacles.begin(), obstacles.end(), [](const Obstacle& o) {
-        return o.rect.y > SCREEN_HEIGHT;
-    }), obstacles.end());
-    }
-
-
 }
 
 void Game::render() {
@@ -225,11 +240,16 @@ void Game::render() {
     if (isMenu) {
         SDL_RenderCopy(renderer, menuBackground, nullptr, nullptr);
         SDL_RenderCopy(renderer, startButtonTexture, nullptr, &startButtonRect);
+        // Hiển thị mức âm lượng trong menu
+        std::string volumeText = "Volume: " + std::to_string(musicVolume * 100 / MIX_MAX_VOLUME) + "%";
+        scoreManager.renderText(renderer, volumeText.c_str(), 20, 20);
         SDL_RenderPresent(renderer);
         return;
     }
     scoreManager.render(renderer);
-
+    // Hiển thị mức âm lượng trong game
+    std::string volumeText = "Volume: " + std::to_string(musicVolume * 100 / MIX_MAX_VOLUME) + "%";
+    scoreManager.renderText(renderer, volumeText.c_str(), 20, 20);
 
     SDL_RenderPresent(renderer);
 }
@@ -241,9 +261,8 @@ void Game::clean() {
     SDL_DestroyTexture(gameOverTexture);
     SDL_DestroyTexture(menuBackground);
     SDL_DestroyTexture(startButtonTexture);
-    SoundManager::clean;
+    SoundManager::clean();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
-

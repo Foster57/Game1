@@ -13,6 +13,7 @@ public:
     static void playSoundEffect(const std::string& path);
     static void stopMusic();
     static void clean();
+    static void setMusicVolume(int volume);
 
 private:
     static Mix_Music* bgMusic;
