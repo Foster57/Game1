@@ -47,7 +47,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         return false;
     }
     SoundManager::playBackgroundMusic("../Pic and mixer/musicbackground.mp3");
-    SoundManager::setMusicVolume(musicVolume); // Đặt âm lượng ban đầu
+    SoundManager::setMusicVolume(musicVolume);
+
 
     background = TextureManager::loadTexture("../Pic and mixer/background.png", renderer);
     playerTexture = TextureManager::loadTexture("../Pic and mixer/knight1.png", renderer);
@@ -76,37 +77,38 @@ void Game::handleEvents() {
         if (event.type == SDL_QUIT) {
             isRunning = false;
         }
-        // Khi đang ở menu, xử lý click nút Start
+
         if (isMenu) {
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 int x = event.button.x;
                 int y = event.button.y;
                 if (x >= startButtonRect.x && x <= startButtonRect.x + startButtonRect.w &&
                     y >= startButtonRect.y && y <= startButtonRect.y + startButtonRect.h) {
-                    isMenu = false;      // Thoát khỏi menu
-                    startTime = SDL_GetTicks(); // Đánh dấu thời gian bắt đầu game
+                    isMenu = false;
+                    startTime = SDL_GetTicks();
                 }
             }
-            // Điều chỉnh âm lượng trong menu
+
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
                     case SDLK_PLUS:
-                    case SDLK_EQUALS: // Phím '+' hoặc '='
+                    case SDLK_EQUALS:
                         musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
                         SoundManager::setMusicVolume(musicVolume);
                         break;
-                    case SDLK_MINUS: // Phím '-'
+                    case SDLK_MINUS:
                         musicVolume = std::max(musicVolume - 8, 0);
                         SoundManager::setMusicVolume(musicVolume);
                         break;
                 }
             }
+
             return; // Không xử lý gì thêm nếu đang ở menu
         }
 
         if (isGameOver) return;
 
-        else if (event.type == SDL_KEYDOWN) {
+        if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_LEFT:
                     moveLeft = true;
@@ -122,15 +124,6 @@ void Game::handleEvents() {
                         character.isJumping = true;
                     }
                     break;
-                case SDLK_PLUS:
-                case SDLK_EQUALS: // Phím '+' hoặc '='
-                    musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
-                    SoundManager::setMusicVolume(musicVolume);
-                    break;
-                case SDLK_MINUS: // Phím '-'
-                    musicVolume = std::max(musicVolume - 8, 0);
-                    SoundManager::setMusicVolume(musicVolume);
-                    break;
             }
         } else if (event.type == SDL_KEYUP) {
             switch (event.key.keysym.sym) {
@@ -144,6 +137,7 @@ void Game::handleEvents() {
         }
     }
 }
+
 
 void Game::update() {
     if (isGameOver) return;
@@ -240,17 +234,10 @@ void Game::render() {
     if (isMenu) {
         SDL_RenderCopy(renderer, menuBackground, nullptr, nullptr);
         SDL_RenderCopy(renderer, startButtonTexture, nullptr, &startButtonRect);
-        // Hiển thị mức âm lượng trong menu
-        std::string volumeText = "Volume: " + std::to_string(musicVolume * 100 / MIX_MAX_VOLUME) + "%";
-        scoreManager.renderText(renderer, volumeText.c_str(), 20, 20);
         SDL_RenderPresent(renderer);
         return;
     }
     scoreManager.render(renderer);
-    // Hiển thị mức âm lượng trong game
-    std::string volumeText = "Volume: " + std::to_string(musicVolume * 100 / MIX_MAX_VOLUME) + "%";
-    scoreManager.renderText(renderer, volumeText.c_str(), 20, 20);
-
     SDL_RenderPresent(renderer);
 }
 

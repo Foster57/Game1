@@ -18,6 +18,8 @@ public:
 private:
     static Mix_Music* bgMusic;
     static Mix_Chunk* effect;
+    static int currentVolume;
+
 };
 
 #endif

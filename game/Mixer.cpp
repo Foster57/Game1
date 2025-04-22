@@ -1,7 +1,8 @@
 #include "Mixer.h"
-
+#include <algorithm>
 Mix_Music* SoundManager::bgMusic = nullptr;
 Mix_Chunk* SoundManager::effect = nullptr;
+
 
 bool SoundManager::init() {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
@@ -34,11 +35,10 @@ void SoundManager::stopMusic() {
 }
 
 void SoundManager::setMusicVolume(int volume) {
-    // Đảm bảo âm lượng nằm trong khoảng hợp lệ (0 đến MIX_MAX_VOLUME)
-    if (volume < 0) volume = 0;
-    if (volume > MIX_MAX_VOLUME) volume = MIX_MAX_VOLUME;
+    volume = std::clamp(volume, 0, MIX_MAX_VOLUME); //
     Mix_VolumeMusic(volume);
 }
+
 
 void SoundManager::clean() {
     if (bgMusic) {
