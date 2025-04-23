@@ -44,6 +44,11 @@ private:
     SDL_Texture* gameOverTexture;
     SDL_Rect bg1, bg2;
     SDL_Rect playerSrc, playerDst;
+    SDL_Texture* volumeUpTexture;
+    SDL_Texture* volumeDownTexture;
+    SDL_Rect volumeUpRect;
+    SDL_Rect volumeDownRect;
+
     int frame;
     float obstacleBaseSpeed = 2.0f; // tốc độ cơ bản
     struct Character {

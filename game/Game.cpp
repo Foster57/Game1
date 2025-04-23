@@ -38,6 +38,16 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
     menuBackground = TextureManager::loadTexture("../Pic and mixer/menu_background.png", renderer);
     startButtonTexture = TextureManager::loadTexture("../Pic and mixer/start_button.png", renderer);
+    volumeUpTexture = TextureManager::loadTexture("../Pic and mixer/volume_up.png", renderer);
+    volumeDownTexture = TextureManager::loadTexture("../Pic and mixer/volume_down.png", renderer);
+
+    if (!volumeUpTexture || !volumeDownTexture) {
+        return false;
+    }
+
+volumeUpRect = { 650, 500, 64, 64 };      // Tùy chỉnh vị trí
+volumeDownRect = { 550, 500, 64, 64 };
+
 
     if (!menuBackground || !startButtonTexture) {
         return false;
@@ -70,6 +80,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     return true;
 }
 
+// Xử lí các nút
 void Game::handleEvents() {
     SDL_Event event;
 
@@ -79,32 +90,49 @@ void Game::handleEvents() {
         }
 
         if (isMenu) {
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
-                int x = event.button.x;
-                int y = event.button.y;
-                if (x >= startButtonRect.x && x <= startButtonRect.x + startButtonRect.w &&
-                    y >= startButtonRect.y && y <= startButtonRect.y + startButtonRect.h) {
-                    isMenu = false;
-                    startTime = SDL_GetTicks();
-                }
-            }
+    if (event.type == SDL_MOUSEBUTTONDOWN) {
+        int x = event.button.x;
+        int y = event.button.y;
 
-            if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
-                    case SDLK_PLUS:
-                    case SDLK_EQUALS:
-                        musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
-                        SoundManager::setMusicVolume(musicVolume);
-                        break;
-                    case SDLK_MINUS:
-                        musicVolume = std::max(musicVolume - 8, 0);
-                        SoundManager::setMusicVolume(musicVolume);
-                        break;
-                }
-            }
-
-            return; // Không xử lý gì thêm nếu đang ở menu
+        // Bấm start
+        if (x >= startButtonRect.x && x <= startButtonRect.x + startButtonRect.w &&
+            y >= startButtonRect.y && y <= startButtonRect.y + startButtonRect.h) {
+            isMenu = false;
+            startTime = SDL_GetTicks();
         }
+
+        // Bấm tăng âm lượng
+        if (x >= volumeUpRect.x && x <= volumeUpRect.x + volumeUpRect.w &&
+            y >= volumeUpRect.y && y <= volumeUpRect.y + volumeUpRect.h) {
+            musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
+            SoundManager::setMusicVolume(musicVolume);
+        }
+
+        // Bấm giảm âm lượng
+        if (x >= volumeDownRect.x && x <= volumeDownRect.x + volumeDownRect.w &&
+            y >= volumeDownRect.y && y <= volumeDownRect.y + volumeDownRect.h) {
+            musicVolume = std::max(musicVolume - 8, 0);
+            SoundManager::setMusicVolume(musicVolume);
+        }
+    }
+
+    if (event.type == SDL_KEYDOWN) {
+        switch (event.key.keysym.sym) {
+            case SDLK_PLUS:
+            case SDLK_EQUALS:
+                musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
+                SoundManager::setMusicVolume(musicVolume);
+                break;
+            case SDLK_MINUS:
+                musicVolume = std::max(musicVolume - 8, 0);
+                SoundManager::setMusicVolume(musicVolume);
+                break;
+        }
+    }
+
+    return;  // ✅ giữ lại, nhưng đã xử lý volume trước đó rồi
+}
+
 
         if (isGameOver) return;
 
@@ -137,6 +165,7 @@ void Game::handleEvents() {
         }
     }
 }
+
 
 
 void Game::update() {
@@ -177,7 +206,7 @@ void Game::update() {
     obstacleBaseSpeed = 2.0f + timeInSeconds / 10.0f;
 
     if (currentTime - lastSpawnTime > 5000) { // spawn mỗi 5s
-        int count = 1 + rand() % 7; // sinh 1-5 obstacle
+        int count = 1 + rand() % 7; // sinh 1-7 obstacle
         for (int i = 0; i < count; ++i) {
             Obstacle obs;
             obs.rect = { rand() % (SCREEN_WIDTH - 25), -50, 75, 75 };
@@ -234,6 +263,8 @@ void Game::render() {
     if (isMenu) {
         SDL_RenderCopy(renderer, menuBackground, nullptr, nullptr);
         SDL_RenderCopy(renderer, startButtonTexture, nullptr, &startButtonRect);
+        SDL_RenderCopy(renderer, volumeUpTexture, nullptr, &volumeUpRect);
+        SDL_RenderCopy(renderer, volumeDownTexture, nullptr, &volumeDownRect);
         SDL_RenderPresent(renderer);
         return;
     }
