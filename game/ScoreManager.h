@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
+#include <fstream>
 
 class ScoreManager {
 public:
@@ -14,6 +15,10 @@ public:
     void update(Uint32 startTime);
     void render(SDL_Renderer* renderer);
     void clean();
+    void saveHighScore(const std::string& file);
+    void loadHighScore(const std::string& file);
+    int getHighScore() const;
+    TTF_Font* getFont() const { return font; }
 
 private:
     int score;
@@ -21,6 +26,7 @@ private:
     SDL_Rect scoreRect;
     TTF_Font* font;
     SDL_Color textColor;
+    int highScore;
 };
 extern ScoreManager scoreManager;
 

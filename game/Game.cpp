@@ -35,6 +35,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     if (!scoreManager.init("pixel.ttf", 24)) {
         return false;
     }
+    scoreManager.loadHighScore("../Pic and mixer/highscore.txt");
+
 
     menuBackground = TextureManager::loadTexture("../Pic and mixer/menu_background.png", renderer);
     startButtonTexture = TextureManager::loadTexture("../Pic and mixer/start_button.png", renderer);
@@ -206,14 +208,39 @@ void Game::update() {
     obstacleBaseSpeed = 2.0f + timeInSeconds / 10.0f;
 
     if (currentTime - lastSpawnTime > 5000) { // spawn mỗi 5s
-        int count = 1 + rand() % 7; // sinh 1-7 obstacle
-        for (int i = 0; i < count; ++i) {
+        if (currentTime - lastSpawnTime > 5000) { // mỗi 5s
+    int count = 1 + rand() % 5; // số lượng obstacle sinh ra
+
+    for (int i = 0; i < count; ++i) {
+        bool valid = false;
+        SDL_Rect newRect;
+        int attempts = 0;
+
+        while (!valid && attempts < 20) {
+            newRect = { rand() % (SCREEN_WIDTH - 75), -50, 75, 75 };
+            valid = true;
+
+            for (const auto& existing : obstacles) {
+                if (SDL_HasIntersection(&newRect, &existing.rect)) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            attempts++;
+        }
+
+        if (valid) {
             Obstacle obs;
-            obs.rect = { rand() % (SCREEN_WIDTH - 25), -50, 75, 75 };
-            obs.speed = obstacleBaseSpeed + rand() % 3;  // speed dao động quanh tốc độ cơ bản
+            obs.rect = newRect;
+            obs.speed = obstacleBaseSpeed + rand() % 3;
             obstacles.push_back(obs);
         }
-        lastSpawnTime = currentTime;
+    }
+
+    lastSpawnTime = currentTime;
+}
+
     }
 
     // Xóa obstacle nếu ra khỏi màn hình
@@ -268,6 +295,15 @@ void Game::render() {
         SDL_RenderPresent(renderer);
         return;
     }
+    std::string hsText = "High Score: " + std::to_string(scoreManager.getHighScore());
+    SDL_Color color = { 255, 255, 255, 255 };
+    SDL_Surface* surface = TTF_RenderText_Solid(scoreManager.getFont(), hsText.c_str(), color);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Rect hsRect = { 10, 50, surface->w, surface->h };  // Vị trí tùy chỉnh
+    SDL_RenderCopy(renderer, texture, nullptr, &hsRect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
+
     scoreManager.render(renderer);
     SDL_RenderPresent(renderer);
 }
@@ -279,6 +315,7 @@ void Game::clean() {
     SDL_DestroyTexture(gameOverTexture);
     SDL_DestroyTexture(menuBackground);
     SDL_DestroyTexture(startButtonTexture);
+    scoreManager.saveHighScore("../Pic and mixer/highscore.txt");
     SoundManager::clean();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

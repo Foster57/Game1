@@ -23,6 +23,9 @@ bool ScoreManager::init(const std::string& fontPath, int fontSize) {
 void ScoreManager::update(Uint32 startTime) {
     Uint32 currentTime = SDL_GetTicks();
     score = (currentTime - startTime) / 1000;
+    if (score > highScore) {
+    highScore = score;
+    }
 }
 
 void ScoreManager::render(SDL_Renderer* renderer) {
@@ -39,6 +42,27 @@ void ScoreManager::render(SDL_Renderer* renderer) {
     SDL_FreeSurface(textSurface);
 
     SDL_RenderCopy(renderer, scoreTexture, nullptr, &scoreRect);
+}
+void ScoreManager::saveHighScore(const std::string& file) {
+    std::ofstream out(file);
+    if (out.is_open()) {
+        out << highScore;
+        out.close();
+    }
+}
+
+void ScoreManager::loadHighScore(const std::string& file) {
+    std::ifstream in(file);
+    if (in.is_open()) {
+        in >> highScore;
+        in.close();
+    } else {
+        highScore = 0; // mặc định nếu chưa có file
+    }
+}
+
+int ScoreManager::getHighScore() const {
+    return highScore;
 }
 
 void ScoreManager::clean() {

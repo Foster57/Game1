@@ -35,7 +35,7 @@
 	<SDL_ttf.h>
 	<string>
 
-1745376111 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
+1745456255 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
 	"Game.h"
 	"Texture.h"
 	"ScoreManager.h"
@@ -50,10 +50,11 @@
 	<vector>
 	"ScoreManager.h"
 
-1744359704 c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.h
+1745455974 c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.h
 	<SDL.h>
 	<SDL_ttf.h>
 	<string>
+	<fstream>
 
 1743543902 c:\users\dang tran tien\onedrive\desktop\advanture\game\texture.h
 	<SDL.h>
@@ -64,7 +65,7 @@
 	"Game.h"
 	"ScoreManager.h"
 
-1744359778 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.cpp
+1745455974 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.cpp
 	"ScoreManager.h"
 	<SDL.h>
 	<SDL_ttf.h>
