@@ -183,7 +183,7 @@ void Game::update() {
 
     if (character.rect.y + character.rect.h >= GROUND_Y) {
         character.rect.y = GROUND_Y - character.rect.h;
-        character.velocityY = 0; // Reset lại vận tốc rơi
+        character.velocityY = 20 ; // Reset lại vận tốc rơi
         character.isJumping = false;
     }
     // Tạo hitbox nhỏ hơn nhân vật
@@ -193,6 +193,13 @@ void Game::update() {
         character.rect.w - 20,
         character.rect.h - 20
     };
+    SDL_Rect obstacleHitbox = {
+    obstacle.rect.x ,
+    obstacle.rect.y ,
+    obstacle.rect.w - 10,
+    obstacle.rect.h - 10
+    };
+
 
     playerSrc = {
         frame * FRAME_WIDTH,
@@ -260,7 +267,7 @@ void Game::update() {
             obs.rect.y += obs.speed;
 
             // Va chạm
-            if (SDL_HasIntersection(&characterHitbox, &obs.rect)) {
+            if (SDL_HasIntersection(&characterHitbox, &obstacleHitbox)) {
                 isGameOver = true;
                 SoundManager::stopMusic();
                 break;
