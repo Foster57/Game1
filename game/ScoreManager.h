@@ -15,6 +15,7 @@ public:
     void update(Uint32 startTime);
     void render(SDL_Renderer* renderer);
     void clean();
+    void reset();
     void saveHighScore(const std::string& file);
     void loadHighScore(const std::string& file);
     int getHighScore() const;

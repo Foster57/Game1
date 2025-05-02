@@ -47,17 +47,19 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         return false;
     }
 
-volumeUpRect = { 650, 500, 64, 64 };      // Tùy chỉnh vị trí
-volumeDownRect = { 550, 500, 64, 64 };
+volumeUpRect = {600, 500, 64, 64};      // Tùy chỉnh vị trí
+volumeDownRect = {720, 500, 64, 64};
 
 
     if (!menuBackground || !startButtonTexture) {
         return false;
     }
+    // Chạy nhạc nền
     if (!SoundManager::init()) {
         std::cout << "Không thể khởi tạo âm thanh!" << std::endl;
         return false;
     }
+    // Khởi chạy nhạc nền
     SoundManager::playBackgroundMusic("../Pic and mixer/musicbackground.mp3");
     SoundManager::setMusicVolume(musicVolume);
 
@@ -69,6 +71,18 @@ volumeDownRect = { 550, 500, 64, 64 };
     if (!gameOverTexture) {
         return false;
     }
+    // Tạo nút quit và restart
+    restartButtonTexture = TextureManager::loadTexture("../Pic and mixer/restart_button.png", renderer);
+    quitButtonTexture = TextureManager::loadTexture("../Pic and mixer/quit_button.png", renderer);
+
+    if (!restartButtonTexture || !quitButtonTexture) {
+        return false;
+    }
+
+    // Vị trí nút (tuỳ chỉnh cho đẹp)
+    restartButtonRect = { SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 100, 120, 60 };
+    quitButtonRect =    { SCREEN_WIDTH / 2 + 30,  SCREEN_HEIGHT / 2 + 100, 120, 60 };
+
 
     bg1 = {0, 0, width, height};
     bg2 = {width, 0, width, height};
@@ -136,7 +150,21 @@ void Game::handleEvents() {
 }
 
 
-        if (isGameOver) return;
+        if (isGameOver){
+            if (event.type == SDL_MOUSEBUTTONDOWN){
+                int x = event.button.x;
+                int y = event.button.y;
+                if (x >= restartButtonRect.x && x <= restartButtonRect.x +restartButtonRect.w &&
+                    y >= restartButtonRect.y && y <= restartButtonRect.y + restartButtonRect.h){
+                        restart(); // Gọi hàm reset
+                    }
+                if (x >= quitButtonRect.x && x <= quitButtonRect.x + quitButtonRect.w &&
+                    y >= quitButtonRect.y && y <= quitButtonRect.y + quitButtonRect.h){
+                        isRunning = false; // Thoát game
+                    }
+            }
+            return;
+        }
 
         if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
@@ -193,13 +221,6 @@ void Game::update() {
         character.rect.w - 20,
         character.rect.h - 20
     };
-    SDL_Rect obstacleHitbox = {
-    obstacle.rect.x ,
-    obstacle.rect.y ,
-    obstacle.rect.w - 10,
-    obstacle.rect.h - 10
-    };
-
 
     playerSrc = {
         frame * FRAME_WIDTH,
@@ -263,22 +284,41 @@ void Game::update() {
         frame = (frame + 1) % 4;
     }
     if (!isGameOver) {
-        for (auto& obs : obstacles) {
-            obs.rect.y += obs.speed;
+    for (auto& obs : obstacles) {
+        obs.rect.y += obs.speed;
 
-            // Va chạm
-            if (SDL_HasIntersection(&characterHitbox, &obstacleHitbox)) {
-                isGameOver = true;
-                SoundManager::stopMusic();
-                break;
-            }
+        SDL_Rect obstacleHitbox = {
+            obs.rect.x + 5,
+            obs.rect.y + 5,
+            obs.rect.w - 10,
+            obs.rect.h - 10
+        };
+
+        // Kiểm tra va chạm
+        if (SDL_HasIntersection(&characterHitbox, &obstacleHitbox)) {
+            isGameOver = true;
+            SoundManager::stopMusic();
+            break;
         }
+    }
+}
 
         obstacles.erase(std::remove_if(obstacles.begin(), obstacles.end(), [](const Obstacle& o) {
             return o.rect.y > SCREEN_HEIGHT;
         }), obstacles.end());
     }
+void Game::restart() {
+    isGameOver = false;
+    character.rect = {100, GROUND_Y - FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT};
+    character.velocityY = 0;
+    character.isJumping = false;
+    obstacles.clear();
+    scoreManager.reset();  // Nếu bạn có hàm reset điểm số
+    startTime = SDL_GetTicks();
+    SoundManager::playBackgroundMusic("../Pic and mixer/musicbackground.mp3");
+    SoundManager::setMusicVolume(musicVolume);
 }
+
 
 void Game::render() {
     SDL_RenderClear(renderer);
@@ -290,10 +330,7 @@ void Game::render() {
     for (const auto& obs : obstacles) {
         SDL_RenderCopy(renderer, obstacleTexture, nullptr, &obs.rect);
     }
-    if (isGameOver && gameOverTexture) {
-        SDL_Rect gameOverRect = { SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100, 400, 400 };
-        SDL_RenderCopy(renderer, gameOverTexture, nullptr, &gameOverRect);
-    }
+
     if (isMenu) {
         SDL_RenderCopy(renderer, menuBackground, nullptr, nullptr);
         SDL_RenderCopy(renderer, startButtonTexture, nullptr, &startButtonRect);
@@ -302,11 +339,19 @@ void Game::render() {
         SDL_RenderPresent(renderer);
         return;
     }
+
+    if (isGameOver && gameOverTexture) {
+        SDL_Rect gameOverRect = { SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100, 400, 400 };
+        SDL_RenderCopy(renderer, gameOverTexture, nullptr, &gameOverRect);
+        SDL_RenderCopy(renderer, restartButtonTexture, nullptr, &restartButtonRect);
+        SDL_RenderCopy(renderer, quitButtonTexture, nullptr, &quitButtonRect);
+    }
+
     std::string hsText = "High Score: " + std::to_string(scoreManager.getHighScore());
     SDL_Color color = { 255, 255, 255, 255 };
     SDL_Surface* surface = TTF_RenderText_Solid(scoreManager.getFont(), hsText.c_str(), color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_Rect hsRect = { 10, 50, surface->w, surface->h };  // Vị trí tùy chỉnh
+    SDL_Rect hsRect = { 10, 50, surface->w, surface->h };
     SDL_RenderCopy(renderer, texture, nullptr, &hsRect);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
@@ -314,6 +359,7 @@ void Game::render() {
     scoreManager.render(renderer);
     SDL_RenderPresent(renderer);
 }
+
 
 void Game::clean() {
     SDL_DestroyTexture(background);

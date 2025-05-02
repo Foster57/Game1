@@ -60,6 +60,9 @@ void ScoreManager::loadHighScore(const std::string& file) {
         highScore = 0; // mặc định nếu chưa có file
     }
 }
+void ScoreManager::reset() {
+    score = 0; // hoặc bất kỳ logic reset nào bạn cần
+}
 
 int ScoreManager::getHighScore() const {
     return highScore;

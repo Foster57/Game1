@@ -28,6 +28,7 @@ public:
     bool init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
     void handleEvents();
     void update();
+    void restart();
     void render();
     void clean();
     bool running() { return isRunning; }
@@ -48,6 +49,10 @@ private:
     SDL_Texture* volumeDownTexture;
     SDL_Rect volumeUpRect;
     SDL_Rect volumeDownRect;
+    SDL_Texture* restartButtonTexture;
+    SDL_Texture* quitButtonTexture;
+    SDL_Rect restartButtonRect;
+    SDL_Rect quitButtonRect;
 
     int frame;
     float obstacleBaseSpeed = 2.0f; // tốc độ cơ bản
