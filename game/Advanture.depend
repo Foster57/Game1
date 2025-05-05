@@ -35,14 +35,14 @@
 	<SDL_ttf.h>
 	<string>
 
-1746213420 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
+1746371055 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
 	"Game.h"
 	"Texture.h"
 	"ScoreManager.h"
 	"Mixer.h"
 	<string>
 
-1746213496 c:\users\dang tran tien\onedrive\desktop\advanture\game\game.h
+1746406833 c:\users\dang tran tien\onedrive\desktop\advanture\game\game.h
 	<SDL.h>
 	<SDL_image.h>
 	<iostream>
@@ -61,11 +61,12 @@
 	<SDL_image.h>
 	<iostream>
 
-1744359704 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\main.cpp
+1746406354 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\main.cpp
 	"Game.h"
 	"ScoreManager.h"
+	"Mixer.h"
 
-1746213581 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.cpp
+1746215172 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\scoremanager.cpp
 	"ScoreManager.h"
 	<SDL.h>
 	<SDL_ttf.h>

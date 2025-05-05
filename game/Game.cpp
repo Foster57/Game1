@@ -7,7 +7,7 @@
 Game::Game()
     : window(nullptr), renderer(nullptr), background(nullptr), playerTexture(nullptr),
       obstacleTexture(nullptr), gameOverTexture(nullptr), menuBackground(nullptr),
-      startButtonTexture(nullptr), frame(0), lastSpawnTime(0), obstacleBaseSpeed(0),
+      startButtonTexture(nullptr), frame(0), lastSpawnTime(0), obstacleBaseSpeed(2.0f),
       startTime(0), moveLeft(false), moveRight(false), isRunning(false),
       isGameOver(false), isMenu(true), musicVolume(64) {
 }
@@ -120,31 +120,31 @@ void Game::handleEvents() {
         // Bấm tăng âm lượng
         if (x >= volumeUpRect.x && x <= volumeUpRect.x + volumeUpRect.w &&
             y >= volumeUpRect.y && y <= volumeUpRect.y + volumeUpRect.h) {
-            musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
+            musicVolume = std::min(musicVolume + 20, MIX_MAX_VOLUME);
             SoundManager::setMusicVolume(musicVolume);
         }
 
         // Bấm giảm âm lượng
         if (x >= volumeDownRect.x && x <= volumeDownRect.x + volumeDownRect.w &&
             y >= volumeDownRect.y && y <= volumeDownRect.y + volumeDownRect.h) {
-            musicVolume = std::max(musicVolume - 8, 0);
+            musicVolume = std::max(musicVolume - 10, 0);
             SoundManager::setMusicVolume(musicVolume);
         }
     }
 
-    if (event.type == SDL_KEYDOWN) {
-        switch (event.key.keysym.sym) {
-            case SDLK_PLUS:
-            case SDLK_EQUALS:
-                musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
-                SoundManager::setMusicVolume(musicVolume);
-                break;
-            case SDLK_MINUS:
-                musicVolume = std::max(musicVolume - 8, 0);
-                SoundManager::setMusicVolume(musicVolume);
-                break;
-        }
-    }
+//    if (event.type == SDL_KEYDOWN) {
+//        switch (event.key.keysym.sym) {
+//            case SDLK_PLUS:
+//            case SDLK_EQUALS:
+//                musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
+//                SoundManager::setMusicVolume(musicVolume);
+//                break;
+//            case SDLK_MINUS:
+//                musicVolume = std::max(musicVolume - 8, 0);
+//                SoundManager::setMusicVolume(musicVolume);
+//                break;
+//        }
+//    }
 
     return;  // ✅ giữ lại, nhưng đã xử lý volume trước đó rồi
 }
@@ -313,7 +313,9 @@ void Game::restart() {
     character.velocityY = 0;
     character.isJumping = false;
     obstacles.clear();
-    scoreManager.reset();  // Nếu bạn có hàm reset điểm số
+    obstacleBaseSpeed = 2.0f; // reset the speed of obstacle
+    lastSpawnTime = 0;// reset Time
+    scoreManager.reset();  //reset điểm số
     startTime = SDL_GetTicks();
     SoundManager::playBackgroundMusic("../Pic and mixer/musicbackground.mp3");
     SoundManager::setMusicVolume(musicVolume);

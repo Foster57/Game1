@@ -5,7 +5,7 @@
 #include <sstream>
 
 ScoreManager::ScoreManager() : score(0), scoreTexture(nullptr), font(nullptr) {
-    textColor = {255, 255, 255, 255}; // Black color
+    textColor = {255, 255, 255, 255}; // White color
 }
 
 ScoreManager::~ScoreManager() {
@@ -61,7 +61,7 @@ void ScoreManager::loadHighScore(const std::string& file) {
     }
 }
 void ScoreManager::reset() {
-    score = 0; // hoặc bất kỳ logic reset nào bạn cần
+    score = 0; // Mặc định khi restart score = 0
 }
 
 int ScoreManager::getHighScore() const {
