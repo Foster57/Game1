@@ -13,7 +13,7 @@ Game::Game()
 }
 
 Game::~Game() {}
-
+// Khai báo + render các dữ liệu cần
 bool Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         return false;
@@ -47,8 +47,9 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         return false;
     }
 
-volumeUpRect = {600, 500, 64, 64};      // Tùy chỉnh vị trí
-volumeDownRect = {720, 500, 64, 64};
+    // chỉnh vị trí nút tăng giảm âm lượng
+    volumeUpRect = {600, 500, 64, 64};
+    volumeDownRect = {720, 500, 64, 64};
 
 
     if (!menuBackground || !startButtonTexture) {
@@ -229,7 +230,7 @@ void Game::update() {
         FRAME_HEIGHT
     };
     Uint32 currentTime = SDL_GetTicks();
-    // Tăng tốc độ dần dần theo thời gian (ví dụ mỗi 10 giây)
+    // Tăng tốc độ dần dần theo thời gian (10 giây)
     scoreManager.update(startTime);
 
     float timeInSeconds = SDL_GetTicks() / 1000.0f;
@@ -309,9 +310,12 @@ void Game::update() {
     }
 void Game::restart() {
     isGameOver = false;
-    character.rect = {100, GROUND_Y - FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT};
+    int randomX = rand() % (SCREEN_WIDTH - SCREEN_HEIGHT);// Random ngau nhien theo truc x
+    character.rect = {randomX, GROUND_Y - FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT};
     character.velocityY = 0;
     character.isJumping = false;
+    moveLeft = false;
+    moveRight = false;
     obstacles.clear();
     obstacleBaseSpeed = 2.0f; // reset the speed of obstacle
     lastSpawnTime = 0;// reset Time
