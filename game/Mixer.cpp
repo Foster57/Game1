@@ -10,15 +10,19 @@ bool SoundManager::init() {
         std::cout << "SDL_mixer lỗi: " << Mix_GetError() << std::endl;
         return false;
     }
-    // load foot step
-    footstepSound = Mix_LoadWAV("../Pic and mixer/footstep.mp3");
-    if(!footstepSound){
-        std:: cout << "Can't load footstepSound: " << Mix_GetError() << std::endl;
+
+    footstepSound = Mix_LoadWAV("../Pic and mixer/footstep.wav");
+    if (!footstepSound) {
+        std::cout << "Can't load footstepSound: " << Mix_GetError() << std::endl;
         return false;
     }
 
+    // Tăng âm lượng bước chân lên tối đa (128)
+    Mix_VolumeChunk(footstepSound, 128);
+
     return true;
 }
+
 // Music background
 void SoundManager::playBackgroundMusic(const std::string& path) {
     bgMusic = Mix_LoadMUS(path.c_str());

@@ -9,8 +9,8 @@ Game::Game()
       obstacleTexture(nullptr), gameOverTexture(nullptr), menuBackground(nullptr),
       startButtonTexture(nullptr), frame(0), lastSpawnTime(0), obstacleBaseSpeed(2.0f),
       startTime(0), moveLeft(false), moveRight(false), isRunning(false),
-      isGameOver(false), isMenu(true), musicVolume(64) {
-}
+      isGameOver(false), isMenu(true), musicVolume(50) {}
+
 
 Game::~Game() {}
 // Khai báo + render các dữ liệu cần

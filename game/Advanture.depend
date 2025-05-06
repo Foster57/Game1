@@ -35,7 +35,7 @@
 	<SDL_ttf.h>
 	<string>
 
-1746500171 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
+1746540628 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
 	"Game.h"
 	"Texture.h"
 	"ScoreManager.h"
@@ -80,7 +80,7 @@
 	<string>
 	<iostream>
 
-1745217170 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\mixer.cpp
+1746547776 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\mixer.cpp
 	"Mixer.h"
 	<algorithm>
 
