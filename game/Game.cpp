@@ -48,8 +48,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     }
 
     // chỉnh vị trí nút tăng giảm âm lượng
-    volumeUpRect = {600, 500, 64, 64};
-    volumeDownRect = {720, 500, 64, 64};
+    volumeUpRect = {600, 500, 60, 60};
+    volumeDownRect = {720, 500, 60, 60};
 
 
     if (!menuBackground || !startButtonTexture) {
@@ -81,8 +81,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     }
 
     // Vị trí nút (tuỳ chỉnh cho đẹp)
-    restartButtonRect = { SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 100, 120, 60 };
-    quitButtonRect =    { SCREEN_WIDTH / 2 + 30,  SCREEN_HEIGHT / 2 + 100, 120, 60 };
+    restartButtonRect = { SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 + 200, 120, 60 };
+    quitButtonRect =    { SCREEN_WIDTH / 2 + 30,  SCREEN_HEIGHT / 2 + 200, 120, 60 };
 
 
     bg1 = {0, 0, width, height};
@@ -90,7 +90,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
     character = {{100, GROUND_Y - FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT}, 0, false};
 
-    obstacle = {{rand() % (SCREEN_WIDTH - 25), -50, 75, 75}, 5}; // spawn trên đầu, rơi xuống
+    obstacle = {{rand() % (SCREEN_WIDTH - rand() % 5), -50, 50, 50}, 5}; // spawn trên đầu, rơi xuống
 
     isRunning = true;
 
@@ -133,19 +133,7 @@ void Game::handleEvents() {
         }
     }
 
-//    if (event.type == SDL_KEYDOWN) {
-//        switch (event.key.keysym.sym) {
-//            case SDLK_PLUS:
-//            case SDLK_EQUALS:
-//                musicVolume = std::min(musicVolume + 8, MIX_MAX_VOLUME);
-//                SoundManager::setMusicVolume(musicVolume);
-//                break;
-//            case SDLK_MINUS:
-//                musicVolume = std::max(musicVolume - 8, 0);
-//                SoundManager::setMusicVolume(musicVolume);
-//                break;
-//        }
-//    }
+
 
     return;  // ✅ giữ lại, nhưng đã xử lý volume trước đó rồi
 }
@@ -200,7 +188,7 @@ void Game::handleEvents() {
 
 
 void Game::update() {
-    if (isGameOver) return;
+    if(isMenu || isGameOver) return;
     bg1.x -= 2;
     bg2.x -= 2;
 
@@ -212,7 +200,7 @@ void Game::update() {
 
     if (character.rect.y + character.rect.h >= GROUND_Y) {
         character.rect.y = GROUND_Y - character.rect.h;
-        character.velocityY = 20 ; // Reset lại vận tốc rơi
+        character.velocityY = 20 ;
         character.isJumping = false;
     }
     // Tạo hitbox nhỏ hơn nhân vật
@@ -347,7 +335,7 @@ void Game::render() {
     }
 
     if (isGameOver && gameOverTexture) {
-        SDL_Rect gameOverRect = { SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100, 400, 400 };
+        SDL_Rect gameOverRect = { SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100, 300, 300 };
         SDL_RenderCopy(renderer, gameOverTexture, nullptr, &gameOverRect);
         SDL_RenderCopy(renderer, restartButtonTexture, nullptr, &restartButtonRect);
         SDL_RenderCopy(renderer, quitButtonTexture, nullptr, &quitButtonRect);

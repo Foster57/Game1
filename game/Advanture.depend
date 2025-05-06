@@ -35,14 +35,14 @@
 	<SDL_ttf.h>
 	<string>
 
-1746437056 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
+1746439437 source:c:\users\dang tran tien\onedrive\desktop\advanture\game\game.cpp
 	"Game.h"
 	"Texture.h"
 	"ScoreManager.h"
 	"Mixer.h"
 	<string>
 
-1746406833 c:\users\dang tran tien\onedrive\desktop\advanture\game\game.h
+1746499568 c:\users\dang tran tien\onedrive\desktop\advanture\game\game.h
 	<SDL.h>
 	<SDL_image.h>
 	<iostream>

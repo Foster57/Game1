@@ -38,7 +38,7 @@ private:
     SDL_Renderer* renderer;
     SDL_Texture* menuBackground = nullptr;
     SDL_Texture* startButtonTexture = nullptr;
-    SDL_Rect startButtonRect = { SCREEN_WIDTH / 2 -135, SCREEN_HEIGHT / 2 - 50, 300, 200 };
+    SDL_Rect startButtonRect = { SCREEN_WIDTH / 2 -350, SCREEN_HEIGHT / 2 + 100, 200, 100 };
     SDL_Texture* background;
     SDL_Texture* playerTexture;
     SDL_Texture* obstacleTexture;
