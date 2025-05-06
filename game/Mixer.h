@@ -10,14 +10,15 @@ class SoundManager {
 public:
     static bool init();
     static void playBackgroundMusic(const std::string& path);
-    static void playSoundEffect(const std::string& path);
+    static void setMusicVolume(int volume);
+    static void playFootstep();
     static void stopMusic();
     static void clean();
-    static void setMusicVolume(int volume);
+
 
 private:
     static Mix_Music* bgMusic;
-    static Mix_Chunk* effect;
+    static Mix_Chunk* footstepSound; // tieng buoc chan
     static int currentVolume;
 
 };
